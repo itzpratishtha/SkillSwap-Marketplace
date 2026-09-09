@@ -1,37 +1,19 @@
-import nodemailer from "nodemailer";
+import { BrevoClient } from "@getbrevo/brevo";
 import dotenv from "dotenv";
-import dns from "dns";
 
 dotenv.config({
     path: "./.env"
 });
 
-const createTransporter = async () => {
 
-    const addresses = await dns.promises.resolve4(
-        "smtp.gmail.com"
-    );
+const brevo = new BrevoClient({
+    apiKey: process.env.BREVO_API_KEY,
+});
 
-    const smtpIPv4 = addresses[0];
 
-    return nodemailer.createTransport({
-        host: smtpIPv4,
-
-        port: 587,
-
-        secure: false,
-
-        requireTLS: true,
-
-        tls: {
-            servername: "smtp.gmail.com",
-        },
-
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASSWORD,
-        },
-    });
+const sender = {
+    email: process.env.BREVO_SENDER_EMAIL,
+    name: process.env.BREVO_SENDER_NAME || "SkillSwap",
 };
 
 
@@ -41,21 +23,24 @@ export const sendVerificationEmail = async ({
     token,
 }) => {
 
-    const transporter = await createTransporter();
-
     const verificationUrl =
         `${process.env.CLIENT_URL}/verify-email?token=${token}`;
 
 
-    await transporter.sendMail({
+    await brevo.transactionalEmails.sendTransacEmail({
 
-        from: `"SkillSwap" <${process.env.EMAIL_USER}>`,
+        sender,
 
-        to: email,
+        to: [
+            {
+                email,
+                name,
+            },
+        ],
 
         subject: "Verify your SkillSwap email",
 
-        html: `
+        htmlContent: `
             <div style="
                 font-family: Arial, sans-serif;
                 max-width: 600px;
@@ -100,9 +85,7 @@ export const sendVerificationEmail = async ({
 
             </div>
         `,
-
     });
-
 };
 
 
@@ -112,21 +95,24 @@ export const sendPasswordResetEmail = async ({
     token,
 }) => {
 
-    const transporter = await createTransporter();
-
     const resetUrl =
         `${process.env.CLIENT_URL}/reset-password?token=${token}`;
 
 
-    await transporter.sendMail({
+    await brevo.transactionalEmails.sendTransacEmail({
 
-        from: `"SkillSwap" <${process.env.EMAIL_USER}>`,
+        sender,
 
-        to: email,
+        to: [
+            {
+                email,
+                name,
+            },
+        ],
 
         subject: "Reset your SkillSwap password",
 
-        html: `
+        htmlContent: `
             <div style="
                 font-family: Arial, sans-serif;
                 max-width: 600px;
@@ -166,7 +152,5 @@ export const sendPasswordResetEmail = async ({
 
             </div>
         `,
-
     });
-
 };
