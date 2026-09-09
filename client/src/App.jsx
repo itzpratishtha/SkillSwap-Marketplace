@@ -12,7 +12,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import CheckInbox from "./pages/auth/CheckInbox";
 import DashboardLayout from "./layouts/DashboardLayout";
-import Dashboard from "./pages/dashboard/Dashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
 import Profile from "./pages/profile/Profile";
 import Explore from "./pages/explore/Explore";
 import MentorProfile from "./pages/mentor/MentorProfile";
