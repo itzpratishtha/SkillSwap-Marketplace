@@ -1,2 +1,12 @@
-node_modules
+node_modules/
 .env
+
+# Build files
+dist/
+build/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store

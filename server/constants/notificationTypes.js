@@ -1,0 +1,8 @@
+export const NOTIFICATION_TYPES = {
+    SYSTEM: "SYSTEM",
+    REQUEST: "REQUEST",
+    SESSION: "SESSION",
+    WALLET: "WALLET",
+    REVIEW: "REVIEW",
+    MESSAGE: "MESSAGE",
+};
