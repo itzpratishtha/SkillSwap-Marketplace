@@ -1,24 +1,38 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import dns from "dns";
 
 dotenv.config({
     path: "./.env"
 });
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+const createTransporter = async () => {
 
-    port: 587,
+    const addresses = await dns.promises.resolve4(
+        "smtp.gmail.com"
+    );
 
-    secure: false,
+    const smtpIPv4 = addresses[0];
 
-    requireTLS: true,
+    return nodemailer.createTransport({
+        host: smtpIPv4,
 
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
-    },
-});
+        port: 587,
+
+        secure: false,
+
+        requireTLS: true,
+
+        tls: {
+            servername: "smtp.gmail.com",
+        },
+
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASSWORD,
+        },
+    });
+};
 
 
 export const sendVerificationEmail = async ({
@@ -26,6 +40,8 @@ export const sendVerificationEmail = async ({
     name,
     token,
 }) => {
+
+    const transporter = await createTransporter();
 
     const verificationUrl =
         `${process.env.CLIENT_URL}/verify-email?token=${token}`;
@@ -95,6 +111,8 @@ export const sendPasswordResetEmail = async ({
     name,
     token,
 }) => {
+
+    const transporter = await createTransporter();
 
     const resetUrl =
         `${process.env.CLIENT_URL}/reset-password?token=${token}`;
